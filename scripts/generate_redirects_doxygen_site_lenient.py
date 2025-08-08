@@ -38,7 +38,7 @@ def build_index_page(redirects: dict):
         # Left link goes through our stable redirect path; right link goes direct to target
         left = f"{OUT_DIR.relative_to(DOXY_HTML).as_posix()}/{escape(key)}/"
         right = escape(url)
-        rows.append(f"<li><a href='/{left}'>{escape(key)}</a> &rarr; <a href='{right}' target='_blank'>{right}</a></li>")
+        rows.append(f"<li><a href='{left}'>{escape(key)}</a> &rarr; <a href='{right}' target='_blank'>{right}</a></li>")
 
     html = f"""<!doctype html>
 <meta charset="utf-8">
