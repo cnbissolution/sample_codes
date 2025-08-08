@@ -25,24 +25,47 @@ jobs:
           sudo apt-get install -y doxygen graphviz universal-ctags python3
 
       - name: Build Doxygen
-        run: doxygen Doxyfile
-
-      - name: Build symbol map (file+function -> blob line link)
         run: |
-          python3 scripts/build_symbol_map.py
+          if [ -f Doxyfile ]; then doxygen Doxyfile; else echo "No Doxyfile found."; fi
+
+      - name: List repo (debug)
+        run: |
+          echo "===== tree (top) ====="
+          ls -la
+          echo "===== find C/C++ files ====="
+          find . -type f \( -name "*.c" -o -name "*.cc" -o -name "*.cpp" -o -name "*.cxx" -o -name "*.h" -o -name "*.hpp" \) | sed 's/^/ - /'
+          echo "======================"
+
+      - name: Test ctags on server.cpp (best-effort)
+        run: |
+          which ctags || true
+          ctags --version || true
+          for f in server.cpp src/server.cpp ./server.cpp ./src/server.cpp; do
+            if [ -f "$f" ]; then
+              echo "---- ctags -x --c-kinds=f $f ----"
+              ctags -x --c-kinds=f "$f" || true
+            fi
+          done
+
+      - name: Build symbol map (auto-discover)
+        env:
+          SYMLINK_REPO: cnbissolution/sample_codes
+          SYMLINK_BRANCH: main
+        run: |
+          python3 scripts/build_symbol_map_autodiscover.py
           echo "---- redirects_generated.json ----"
           cat redirects_generated.json || true
 
-      - name: Generate redirect pages inside Doxygen site
+      - name: Generate redirect pages inside Doxygen site (lenient)
         run: |
-          python3 scripts/generate_redirects_doxygen_site.py
+          python3 scripts/generate_redirects_doxygen_site_lenient.py
           echo "---- list sym dir ----"
-          find docs_build/html/sym -maxdepth 3 -type f -name index.html -print || true
+          if [ -d docs_build/html/sym ]; then find docs_build/html/sym -maxdepth 3 -type f -name index.html -print; else echo "(no sym dir)"; fi
 
-      - name: Upload artifact (Doxygen site)
+      - name: Upload artifact (Doxygen site or fallback to site/)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs_build/html
+          path: ${{ (hashFiles('docs_build/html/index.html') != '') && 'docs_build/html' || 'site' }}
 
   deploy:
     needs: build
