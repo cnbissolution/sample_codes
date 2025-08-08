@@ -24,6 +24,9 @@ def main():
     if not REDIR_GENERATED.exists():
         raise SystemExit(f"missing {REDIR_GENERATED}")
     data = json.loads(REDIR_GENERATED.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or not data:
+        raise SystemExit("redirects_generated.json has no entries. Did build_symbol_map.py find any functions?")
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     for key, url in data.items():
