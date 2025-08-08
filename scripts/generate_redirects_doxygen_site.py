@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-# scripts/generate_redirects.py
-# Generate HTML redirect pages from redirects_generated.json
+# scripts/generate_redirects_doxygen_site.py
+# Generate HTML redirect pages under docs_build/html/sym so that Doxygen remains the site root.
 
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = ROOT / "site" / "sym"
+DOXY_HTML = ROOT / "docs_build" / "html"
+OUT_DIR = DOXY_HTML / "sym"
 REDIR_GENERATED = ROOT / "redirects_generated.json"
 
 TEMPLATE = """<!doctype html>
@@ -18,8 +19,10 @@ TEMPLATE = """<!doctype html>
 """
 
 def main():
+    if not DOXY_HTML.exists():
+        raise SystemExit(f"Doxygen output not found at {DOXY_HTML}. Did Doxygen run?")
     if not REDIR_GENERATED.exists():
-        raise SystemExit(f"missing {REDIR_GENERATED}")
+        raise System(f"missing {REDIR_GENERATED}")
     data = json.loads(REDIR_GENERATED.read_text(encoding="utf-8"))
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
