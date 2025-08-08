@@ -1,0 +1,35 @@
+# ---- Basic ----
+PROJECT_NAME           = "sample_codes"
+OUTPUT_DIRECTORY       = docs_build
+CREATE_SUBDIRS         = NO
+
+# ---- Inputs ----
+INPUT                  = .
+FILE_PATTERNS          = *.c *.cpp *.h *.hpp *.md
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */.git/* */.github/* docs_build/*
+
+# ---- Parsing ----
+EXTRACT_ALL            = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_METHODS  = YES
+JAVADOC_AUTOBRIEF      = YES
+MULTILINE_CPP_IS_BRIEF = YES
+
+# ---- Preprocessing ----
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+
+# ---- HTML ----
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_TREEVIEW      = YES
+FULL_PATH_NAMES        = NO
+
+# ---- Diagrams ----
+HAVE_DOT               = YES
+DOT_IMAGE_FORMAT       = svg
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
