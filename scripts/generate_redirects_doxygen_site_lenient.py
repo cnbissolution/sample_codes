@@ -1,45 +1,58 @@
 #!/usr/bin/env python3
 # scripts/generate_redirects_doxygen_site_lenient.py
-# Same as _doxygen_site but does NOT fail if redirects_generated.json is empty.
+# Generate HTML redirect pages under docs_build/html/sym/
+# Merges redirects_generated.json with redirects_static.json if present.
+# static entries override generated ones.
 
+import os
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOXY_HTML = ROOT / "docs_build" / "html"
-OUT_DIR = DOXY_HTML / "sym"
-REDIR_GENERATED = ROOT / "redirects_generated.json"
+DOXYGEN_HTML_DIR = ROOT / "docs_build" / "html"
+SYM_DIR = DOXYGEN_HTML_DIR / "sym"
 
-TEMPLATE = """<!doctype html>
-<meta charset="utf-8">
-<title>Redirecting...</title>
-<meta http-equiv="refresh" content="0; url={url}">
-<script>window.location.replace("{url}");</script>
-<p>If you are not redirected automatically, <a href="{url}">click here</a>.</p>
+generated_file = ROOT / "redirects_generated.json"
+static_file = ROOT / "redirects_static.json"
+
+if not generated_file.exists():
+    print(f"[ERROR] {generated_file} not found. Did build_symbol_map_autodiscover.py run?")
+    exit(1)
+
+with open(generated_file, "r", encoding="utf-8") as f:
+    redirects = json.load(f)
+
+if static_file.exists():
+    with open(static_file, "r", encoding="utf-8") as f:
+        static_map = json.load(f)
+    redirects.update(static_map)  # static overrides generated
+    print(f"[INFO] merged {len(static_map)} static entries")
+
+print(f"[INFO] total redirects: {len(redirects)}")
+
+# Create redirect HTML pages
+for key, target in redirects.items():
+    parts = key.strip("/").split("/")
+    dest_dir = SYM_DIR.joinpath(*parts)
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    html = f"""<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="refresh" content="0; url={target}"/>
+    <link rel="canonical" href="{target}"/>
+  </head>
+  <body>
+    <p>Redirecting to <a href="{target}">{target}</a>...</p>
+  </body>
+</html>
 """
+    with open(dest_dir / "index.html", "w", encoding="utf-8") as outf:
+        outf.write(html)
 
-def main():
-    if not DOXY_HTML.exists():
-        print(f"[WARN] Doxygen output not found at {DOXY_HTML}. Did Doxygen run?")
-        return 0
-    if not REDIR_GENERATED.exists():
-        print(f"[WARN] missing {REDIR_GENERATED}")
-        return 0
-    data = json.loads(REDIR_GENERATED.read_text(encoding="utf-8"))
-    if not isinstance(data, dict) or not data:
-        print("[WARN] redirects_generated.json has no entries. Skipping sym generation.")
-        return 0
+print(f"[DONE] redirect pages written under {SYM_DIR}")
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    for key, url in data.items():
-        parts = key.split("/")
-        path = OUT_DIR
-        for p in parts:
-            path = path / p
-        path.mkdir(parents=True, exist_ok=True)
-        (path / "index.html").write_text(TEMPLATE.format(url=url), encoding="utf-8")
-        print(f"[OK] sym/{'/'.join(parts)}/ -> {url}")
-    return 0
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+# Also publish merged redirects.json for inspection
+SYM_DIR.mkdir(parents=True, exist_ok=True)
+with open(SYM_DIR / "redirects.json", "w", encoding="utf-8") as f:
+    json.dump(redirects, f, ensure_ascii=False, indent=2)
+print(f"[DONE] wrote merged redirects.json to {SYM_DIR / 'redirects.json'}")
