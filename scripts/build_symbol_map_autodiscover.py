@@ -1,20 +1,14 @@
 #!/usr/bin/env python3
-# scripts/build_symbol_map_autodiscover.py
-# Auto-discovers C/C++ files and builds symbol->blob-line redirects with extra diagnostics.
+# scripts/build_symbol_map_autodiscover.py (relative path keys)
 
 import json, os, re, subprocess, sys
 from pathlib import Path
 
-# ====== EDIT HERE ======
-REPO   = os.environ.get("SYMLINK_REPO", "cnbissolution/sample_codes")  # can override via env
+REPO   = os.environ.get("SYMLINK_REPO", "cnbissolution/sample_codes")
 BRANCH = os.environ.get("SYMLINK_BRANCH", "main")
-# Search roots (relative to repo root). Use ["." ] for entire repo.
 SEARCH_DIRS = ["."]
-# Include file patterns:
 INCLUDE_SUFFIXES = {".c", ".cc", ".cpp", ".cxx", ".h", ".hpp"}
-# Exclude directories:
 EXCLUDE_DIRS = {".git", ".github", "docs_build", "site", "build", "out", "dist", "__pycache__"}
-# =======================
 
 ROOT = Path(__file__).resolve().parents[1]
 CTAGS = ["ctags", "--fields=+n", "-x", "--c-kinds=f"]
@@ -25,7 +19,6 @@ def list_source_files():
     for d in SEARCH_DIRS:
         base = (ROOT / d).resolve()
         for p, dirs, fnames in os.walk(base):
-            # prune excluded dirs
             dirs[:] = [x for x in dirs if x not in EXCLUDE_DIRS]
             for fn in fnames:
                 if Path(fn).suffix.lower() in INCLUDE_SUFFIXES:
@@ -45,14 +38,10 @@ def find_function_ranges(src: Path):
         if not m:
             continue
         name, line_no, path = m.group(1), int(m.group(2)), m.group(3)
-        # Normalize path basenames for safety
-        if Path(path).name != src.name:
-            # Some ctags builds output full paths; accept anyway
-            pass
         starts.append((name, line_no))
 
     if not starts:
-        print(f"[INFO] no functions found by ctags in {src.name}")
+        print(f"[INFO] no functions found by ctags in {src}")
         return {}
 
     ranges = {}
@@ -77,13 +66,13 @@ def find_function_ranges(src: Path):
 
 def main():
     srcs = list_source_files()
-    print(f"[INFO] scanning {len(srcs)} files for functions")
+    print(f"[INFO] scanning {len(srcs)} files")
     mapping = {}
     for src in srcs:
-        rel = src.relative_to(ROOT).as_posix()
+        rel = src.relative_to(ROOT).as_posix()  # e.g., src/client.c
         ranges = find_function_ranges(src)
         for func, (s, e) in ranges.items():
-            key = f"{src.name}/{func}"
+            key = f"{rel}/{func}"  # include subdir to avoid collisions
             target = f"https://github.com/{REPO}/blob/{BRANCH}/{rel}#L{s}-L{e}"
             mapping[key] = target
             print(f"[OK] {key} -> L{s}-L{e}")
@@ -91,7 +80,6 @@ def main():
     out = ROOT / "redirects_generated.json"
     out.write_text(json.dumps(mapping, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[DONE] wrote {out} with {len(mapping)} entries")
-    # exit code 0 even if empty; downstream can decide
     return 0
 
 if __name__ == "__main__":

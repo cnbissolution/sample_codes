@@ -1,0 +1,15 @@
+# Minimal Doxyfile for GitHub Pages build
+PROJECT_NAME           = "sample_codes"
+OUTPUT_DIRECTORY       = docs_build
+HTML_OUTPUT            = html
+GENERATE_HTML          = YES
+INPUT                  = .
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */.git/* */.github/* docs_build/* site/* build/* out/* dist/* __pycache__/*
+
+# (Optional) source browser with line anchors like server_8cpp_source.html#l00022
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_FROM_PATH        = .
+OPTIMIZE_OUTPUT_FOR_C  = YES
+EXTRACT_ALL            = YES
