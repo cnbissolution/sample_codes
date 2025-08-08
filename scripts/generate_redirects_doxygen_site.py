@@ -22,7 +22,7 @@ def main():
     if not DOXY_HTML.exists():
         raise SystemExit(f"Doxygen output not found at {DOXY_HTML}. Did Doxygen run?")
     if not REDIR_GENERATED.exists():
-        raise System(f"missing {REDIR_GENERATED}")
+        raise SystemExit(f"missing {REDIR_GENERATED}")
     data = json.loads(REDIR_GENERATED.read_text(encoding="utf-8"))
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 

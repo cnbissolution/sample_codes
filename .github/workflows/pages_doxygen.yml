@@ -1,4 +1,4 @@
-name: Build Doxygen site + symbol redirects (recommended)
+name: Build Doxygen site + symbol redirects
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
         run: |
           python3 scripts/generate_redirects_doxygen_site.py
 
-      - name: Upload artifact (Doxygen site)
+      - name: Upload artifact (Doxygen site root)
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs_build/html
