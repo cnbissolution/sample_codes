@@ -1,0 +1,24 @@
+var NAVTREEINDEX0 =
+{
+"client_8c.html":[2,0,0],
+"client_8c.html#a3c04138a5bfe5d72780bb7e82a18e627":[2,0,0,3],
+"client_8c.html#a6821bafc3c88dfb2e433a095df9940c6":[2,0,0,1],
+"client_8c.html#ac7bef5d85e3dcd73eef56ad39ffc84a9":[2,0,0,2],
+"client_8c.html#af08ec37a8c99d747fb60fa15bc28678b":[2,0,0,0],
+"files.html":[2,0],
+"globals.html":[2,1,0],
+"globals_defs.html":[2,1,3],
+"globals_func.html":[2,1,1],
+"globals_vars.html":[2,1,2],
+"index.html":[],
+"md_README.html":[0],
+"md_README__doxygen__links.html":[1],
+"pages.html":[],
+"server_8cpp.html":[2,0,1],
+"server_8cpp.html#a3b82e7c7e407d902f108930cf5c46d4f":[2,0,1,5],
+"server_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627":[2,0,1,3],
+"server_8cpp.html#a4cdeff48ae8ef693b8c66006a68eadb6":[2,0,1,4],
+"server_8cpp.html#a6821bafc3c88dfb2e433a095df9940c6":[2,0,1,1],
+"server_8cpp.html#ac7bef5d85e3dcd73eef56ad39ffc84a9":[2,0,1,2],
+"server_8cpp.html#af08ec37a8c99d747fb60fa15bc28678b":[2,0,1,0]
+};
