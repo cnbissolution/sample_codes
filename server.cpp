@@ -15,6 +15,10 @@ using namespace std;
 
 SOCKET s_listen, s_accept;
 
+/** \anchor main_func
+ *  @brief Entry point
+ */
+
 int main(int argc, char **argv)
 {
     WSADATA wsaData;
