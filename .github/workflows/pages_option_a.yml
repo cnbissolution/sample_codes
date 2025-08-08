@@ -1,4 +1,4 @@
-name: Build Doxygen site + sym redirects (minimal)
+name: Build Doxygen site + sym redirects (Option A)
 
 on:
   push:
@@ -43,7 +43,7 @@ jobs:
           echo "---- list sym dir ----"
           if [ -d docs_build/html/sym ]; then find docs_build/html/sym -maxdepth 4 -type f -name index.html -print; else echo "(no sym dir)"; fi
 
-      - name: Upload Doxygen site
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs_build/html
