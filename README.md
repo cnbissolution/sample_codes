@@ -1,5 +1,5 @@
-# Welcome to GitHub Desktop!
+# Function quick links
 
-This is your README. READMEs are where you can communicate what your project is and how to use it.
+- [`main()` 함수 (고정 앵커)](https://cnbissolution.github.io/sample_codes/server_8cpp.html#main_func)
 
-Write your name on line 6, save it, and then head back to GitHub Desktop.
+> GitHub Pages에 문서가 배포된 후 위 링크가 활성화됩니다.
