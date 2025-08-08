@@ -1,0 +1,60 @@
+name: Build Doxygen site + sym redirects (minimal)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz universal-ctags python3
+
+      - name: Build Doxygen (requires Doxyfile at repo root)
+        run: doxygen Doxyfile
+
+      - name: Build symbol map (auto-discover)
+        env:
+          SYMLINK_REPO: cnbissolution/sample_codes
+          SYMLINK_BRANCH: main
+        run: |
+          python3 scripts/build_symbol_map_autodiscover.py
+          echo "---- redirects_generated.json ----"
+          cat redirects_generated.json || true
+
+      - name: Generate redirect pages under Doxygen site
+        run: |
+          python3 scripts/generate_redirects_doxygen_site_lenient.py
+          echo "---- list sym dir ----"
+          if [ -d docs_build/html/sym ]; then find docs_build/html/sym -maxdepth 4 -type f -name index.html -print; else echo "(no sym dir)"; fi
+
+      - name: Upload Doxygen site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs_build/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
