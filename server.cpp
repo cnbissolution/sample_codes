@@ -7,7 +7,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
-
+//modify jira test
 #pragma comment(lib, "Ws2_32.lib")
 #define BUF_SIZE 1024
 
