@@ -26,6 +26,13 @@ void func3()
 printf("func3\n");
 }
 
+
+void func4()
+{
+
+printf("func4\n");
+}
+
 int main(int argc, char **argv)
 {
     int num;
