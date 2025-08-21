@@ -19,6 +19,13 @@ void func2()
 printf("func2\n");
 }
 
+
+void func3()
+{
+
+printf("func3\n");
+}
+
 int main(int argc, char **argv)
 {
     int num;
