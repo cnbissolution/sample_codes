@@ -7,6 +7,8 @@
 #pragma comment(lib, "Ws2_32.lib")
 #define BUF_SIZE 1024
 
+
+//JIRA_CB_integration_Test
 void func1()
 {
 
